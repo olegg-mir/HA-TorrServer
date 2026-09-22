@@ -62,6 +62,10 @@ TorrServer uses host networking and listens on port `8090` by default. Home Assi
 
 The HTTP port is configurable for compatibility with the previous Home Assistant package, but changing it from `8090` will make the built-in Ingress entry stop working. Direct LAN access can use the configured port.
 
+## License
+
+TorrServer and the Home Assistant compatibility modifications in this repository are distributed under the GNU General Public License v3.0. See [LICENSE](LICENSE).
+
 ## Credits
 
 - [YouROK/TorrServer](https://github.com/YouROK/TorrServer) — original TorrServer project.
