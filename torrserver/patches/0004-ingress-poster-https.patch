@@ -2,7 +2,6 @@ diff --git a/web/src/utils/Utils.js b/web/src/utils/Utils.js
 --- a/web/src/utils/Utils.js
 +++ b/web/src/utils/Utils.js
 @@ -61,7 +61,13 @@ export const getTorrents = async () => {
- export const getTorrents = async () => {
    try {
      const { data } = await axios.post(torrentsHost(), { action: 'list' })
 -    return data
