@@ -1,34 +1,40 @@
 # HA-TorrServer
 
-A Home Assistant App repository for [YouROK/TorrServer](https://github.com/YouROK/TorrServer).
+A Home Assistant App for [YouROK/TorrServer](https://github.com/YouROK/TorrServer), with automatic upstream updates and Home Assistant-specific compatibility patches.
 
 ## About
 
-HA-TorrServer packages the official TorrServer container for installation and automatic updates through Home Assistant.
+HA-TorrServer builds the current TorrServer release for Home Assistant and keeps it synchronized with upstream automatically.
 
-The project is based on the original [YouROK/TorrServer](https://github.com/YouROK/TorrServer) project and was inspired by the Home Assistant packaging work in [aatrubilin/hassio-torrserver](https://github.com/aatrubilin/hassio-torrserver).
+The project is based on the original [YouROK/TorrServer](https://github.com/YouROK/TorrServer) and incorporates Home Assistant-specific work inspired by [aatrubilin/hassio-torrserver](https://github.com/aatrubilin/hassio-torrserver).
 
-The current implementation deliberately uses the **unmodified official upstream image**:
+Unlike a long-lived source fork, this repository downloads the current upstream release, applies a small and explicit patch set, and builds a Home Assistant image. If an upstream change makes a patch no longer applicable, the build fails instead of silently replacing new TorrServer code with an old copied file.
 
-```text
-ghcr.io/yourok/torrserver:<version>
-```
+## Home Assistant-specific changes
 
-This keeps TorrServer itself fully aligned with upstream releases and avoids maintaining a separate fork.
+The following compatibility changes from `aatrubilin/hassio-torrserver` are carried forward and adapted to the current upstream code:
 
-A GitHub Actions workflow checks the latest upstream release every 6 hours. It updates the Home Assistant app only after the matching upstream container image is available for both `amd64` and `arm64`.
+- `M3U_CUSTOM_HOST` support for generated M3U links;
+- search URL trailing-slash handling for reverse proxy / Ingress use;
+- opening generated playlists in the current Ingress context instead of a new tab;
+- converting HTTP poster URLs to HTTPS to avoid mixed-content problems;
+- Home Assistant Configuration UI for HTTP authentication, Telegram token, M3U custom host, SSL, proxy settings and web access logs.
 
-## Relationship to hassio-torrserver
+The patches live in `torrserver/patches/` and are applied to the selected TorrServer release during CI.
 
-The existing [aatrubilin/hassio-torrserver](https://github.com/aatrubilin/hassio-torrserver) project contains additional Home Assistant-specific work that is **not currently included** in HA-TorrServer:
+## Automatic updates
 
-- a custom `M3U_CUSTOM_HOST` override for generated M3U links;
-- a small search URL adjustment for reverse-proxy/Ingress usage;
-- playlist-opening behavior adapted for Home Assistant Ingress;
-- forcing HTTP poster URLs to HTTPS to avoid mixed-content issues;
-- a Home Assistant configuration wrapper for HTTP authentication, SSL, proxy settings, Telegram token, web access logs, and custom M3U host.
+Every 6 hours GitHub Actions checks the latest non-prerelease release from `YouROK/TorrServer`.
 
-Those changes are useful reference work and are credited here accordingly. HA-TorrServer currently prioritizes staying on the official upstream image without source modifications. Any Home Assistant-specific fixes added later should be implemented as small, maintainable patches against the current upstream version rather than by carrying old copies of whole TorrServer source files.
+When a new upstream release appears, the workflow:
+
+1. checks out the exact upstream release tag;
+2. verifies and applies the HA patch set;
+3. builds a multi-architecture image for `amd64` and `arm64`;
+4. publishes it as `ghcr.io/olegg-mir/ha-torrserver:<app-version>-<upstream-tag>`;
+5. updates `torrserver/config.yaml` and the changelog only after the image build succeeds.
+
+This means an upstream change that conflicts with an HA patch will stop the update rather than publish a potentially broken package.
 
 ## Installation
 
@@ -38,28 +44,25 @@ Add this repository to the Home Assistant App Store:
 https://github.com/olegg-mir/HA-TorrServer
 ```
 
-Then install **TorrServer** from the repository.
-
-## Updating
-
-Updates are automatic at repository level:
-
-1. The workflow checks `YouROK/TorrServer` for the latest release.
-2. It verifies the matching `ghcr.io/yourok/torrserver:<tag>` multi-arch image exists.
-3. It changes `torrserver/config.yaml` to that tag.
-4. Home Assistant then detects the new app version and offers the normal Update action.
+Then install **TorrServer**.
 
 ## Persistent data
 
-The Home Assistant app maps its `addon_config` storage to `/opt/ts`, matching the official TorrServer image layout. TorrServer configuration, logs and torrent metadata therefore remain persistent across app upgrades.
+The Home Assistant app maps its `addon_config` storage to `/opt/ts`, matching the official TorrServer Docker layout:
 
-## Networking
+- `/opt/ts/config`
+- `/opt/ts/torrents`
+- `/opt/ts/log`
 
-The app uses host networking, matching the behavior of the existing community Home Assistant package and allowing TorrServer to use the host network directly. The TorrServer HTTP service listens on port `8090` by default.
+This keeps TorrServer data persistent across app upgrades.
 
-Home Assistant Ingress is enabled on port `8090`. Some upstream web features that create absolute URLs may behave differently behind Ingress; direct access at `http://<home-assistant-ip>:8090` remains available on the local network.
+## Networking and Ingress
+
+TorrServer uses host networking and listens on port `8090` by default. Home Assistant Ingress also points to port `8090`.
+
+The HTTP port is configurable for compatibility with the previous Home Assistant package, but changing it from `8090` will make the built-in Ingress entry stop working. Direct LAN access can use the configured port.
 
 ## Credits
 
-- [YouROK/TorrServer](https://github.com/YouROK/TorrServer) — original TorrServer project and official container images.
-- [aatrubilin/hassio-torrserver](https://github.com/aatrubilin/hassio-torrserver) — Home Assistant packaging, Ingress-related fixes, configuration wrapper, and other HA-specific implementation ideas.
+- [YouROK/TorrServer](https://github.com/YouROK/TorrServer) — original TorrServer project.
+- [aatrubilin/hassio-torrserver](https://github.com/aatrubilin/hassio-torrserver) — Home Assistant packaging, Ingress-related fixes and configuration ideas that this project adapts for current TorrServer releases.

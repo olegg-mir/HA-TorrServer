@@ -1,0 +1,12 @@
+diff --git a/web/src/components/TorrentCard/index.jsx b/web/src/components/TorrentCard/index.jsx
+--- a/web/src/components/TorrentCard/index.jsx
++++ b/web/src/components/TorrentCard/index.jsx
+@@ -486,7 +486,7 @@ const TorrentCard = ({
+           ) : (
+             <StyledButton
+               onClick={() => {
+-                window.open(fullPlaylistLink, '_blank')
++                window.open(fullPlaylistLink, '_self')
+               }}
+             >
+               <PlayArrowIcon />

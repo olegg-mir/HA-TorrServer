@@ -1,5 +1,7 @@
 # TorrServer
 
-TorrServer packaged as a Home Assistant App using the official upstream multi-architecture container image.
+[TorrServer](https://github.com/YouROK/TorrServer) for Home Assistant, automatically kept in sync with upstream releases.
 
-The package intentionally does not carry a modified TorrServer source tree. This keeps the Home Assistant installation as close as possible to the current upstream release.
+This package includes a small set of Home Assistant / Ingress compatibility changes adapted from [aatrubilin/hassio-torrserver](https://github.com/aatrubilin/hassio-torrserver), while keeping the upstream TorrServer source as the base for every build.
+
+Supported architectures: `amd64`, `aarch64`.

@@ -1,9 +1,9 @@
 name: TorrServer
 slug: torrserver
-description: TorrServer for Home Assistant using the official upstream image
-version: "MatriX.145"
+description: TorrServer for Home Assistant with Ingress fixes and automatic upstream updates
+version: "1.0.0-MatriX.145"
 url: "https://github.com/olegg-mir/HA-TorrServer"
-image: "ghcr.io/yourok/torrserver"
+image: "ghcr.io/olegg-mir/ha-torrserver"
 init: false
 legacy: true
 arch:
@@ -13,8 +13,37 @@ map:
   - type: addon_config
     read_only: false
     path: /opt/ts
+options:
+  port: 8090
+  httpauth: false
+  logins: []
+  tgtoken: ""
+  m3u_custom_host: ""
+  ssl: false
+  ssl_port: 8091
+  ssl_cert: ""
+  ssl_key: ""
+  proxymode: "disabled"
+  proxyurl: ""
+  weblog: false
+schema:
+  port: "int(1024,49151)"
+  httpauth: bool
+  logins:
+    - username: str
+      password: password
+  tgtoken: "str?"
+  m3u_custom_host: "str?"
+  ssl: bool
+  ssl_port: "int(1024,49151)"
+  ssl_cert: "str?"
+  ssl_key: "str?"
+  proxymode: "list(disabled|tracker|peers|full)"
+  proxyurl: "str?"
+  weblog: bool
 ingress: true
 ingress_port: 8090
+ingress_stream: true
 host_network: true
 watchdog: "http://[HOST]:[PORT:8090]/echo"
 startup: application

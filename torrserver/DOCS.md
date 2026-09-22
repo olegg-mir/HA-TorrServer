@@ -1,27 +1,41 @@
 # TorrServer Home Assistant App
 
-## Usage
+This app builds the current upstream [TorrServer](https://github.com/YouROK/TorrServer) release with a small set of Home Assistant compatibility patches adapted from [aatrubilin/hassio-torrserver](https://github.com/aatrubilin/hassio-torrserver).
 
-After installing and starting the app, open it from Home Assistant or connect directly to:
+## Access
+
+With the default settings, TorrServer listens on:
 
 ```text
 http://<home-assistant-ip>:8090
 ```
 
-The app runs the official `ghcr.io/yourok/torrserver` image.
+Home Assistant Ingress is enabled on the same port.
+
+> Keep the HTTP port at `8090` if you want to use the built-in Ingress entry. A custom port is supported for direct network access, but Home Assistant's static `ingress_port` cannot follow that option.
+
+## Configuration
+
+The Configuration tab provides:
+
+- HTTP authentication and user/password pairs;
+- Telegram bot token;
+- custom M3U host;
+- TorrServer SSL and SSL port;
+- optional PEM certificate/private key;
+- BitTorrent proxy mode and proxy URL;
+- web access logging.
 
 ## Persistent storage
 
-Home Assistant `addon_config` storage is mounted at `/opt/ts` inside the container. This matches the official TorrServer Docker image defaults:
+The app-specific Home Assistant configuration directory is mounted at `/opt/ts`.
 
-- `/opt/ts/config` - configuration and database
-- `/opt/ts/log` - logs
-- `/opt/ts/torrents` - torrent metadata/files used by TorrServer
+TorrServer uses:
 
-## Updates
+- `/opt/ts/config` — database and configuration;
+- `/opt/ts/torrents` — torrent metadata/files;
+- `/opt/ts/log` — TorrServer log.
 
-This repository tracks the latest non-draft, non-prerelease GitHub release from `YouROK/TorrServer`. A scheduled workflow verifies the matching official container image supports both `amd64` and `arm64` before publishing the new Home Assistant app version.
+## Automatic updates
 
-## Ingress
-
-Ingress is enabled on port `8090`. TorrServer itself is not modified for Home Assistant, so features that generate absolute links may work better through direct LAN access if an Ingress-specific edge case is encountered.
+This repository checks upstream TorrServer releases every 6 hours. A new Home Assistant version is published only after all compatibility patches still apply and the multi-architecture image builds successfully.

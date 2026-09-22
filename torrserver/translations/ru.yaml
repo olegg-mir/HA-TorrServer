@@ -1,0 +1,42 @@
+configuration:
+  port:
+    name: "HTTP порт"
+    description: "Home Assistant Ingress работает на стандартном порту 8090. При изменении порта встроенный Ingress перестанет работать."
+  httpauth:
+    name: "HTTP-аутентификация"
+    description: "Включить Basic Auth в TorrServer."
+  logins:
+    name: "Учетные записи"
+    description: "Пользователи для HTTP-аутентификации TorrServer."
+  tgtoken:
+    name: "Токен Telegram-бота"
+    description: "Необязательный токен Telegram-бота TorrServer."
+  m3u_custom_host:
+    name: "Пользовательский хост для M3U"
+    description: "Например: http://homeassistant:8090. Оставьте пустым, чтобы использовать хост запроса."
+  ssl:
+    name: "Включить SSL"
+    description: "Включить HTTPS в TorrServer."
+  ssl_port:
+    name: "SSL порт"
+    description: "HTTPS-порт TorrServer."
+  ssl_cert:
+    name: "SSL-сертификат"
+    description: "Необязательный PEM-сертификат. Если оставить пустым, TorrServer использует сохраненный или стандартный вариант."
+  ssl_key:
+    name: "Закрытый ключ SSL"
+    description: "Необязательный закрытый PEM-ключ."
+  proxymode:
+    name: "Режим прокси"
+    description: "tracker: HTTP-трекеры; peers: соединения с пирами; full: весь BitTorrent-трафик."
+    options:
+      disabled: "Отключен"
+      tracker: "Только HTTP-трекеры"
+      peers: "Только соединения с пирами"
+      full: "Весь BitTorrent-трафик"
+  proxyurl:
+    name: "URL прокси"
+    description: "HTTP, SOCKS4, SOCKS5 или SOCKS5H URL, например socks5h://user:password@example.com:2080."
+  weblog:
+    name: "Веб-лог"
+    description: "Выводить access log TorrServer в журнал приложения Home Assistant."

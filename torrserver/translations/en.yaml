@@ -1,0 +1,42 @@
+configuration:
+  port:
+    name: "HTTP port"
+    description: "Home Assistant Ingress works on the default port 8090. Changing this port disables the built-in Ingress entry."
+  httpauth:
+    name: "HTTP authentication"
+    description: "Enable TorrServer basic authentication."
+  logins:
+    name: "Logins"
+    description: "Users allowed by TorrServer HTTP authentication."
+  tgtoken:
+    name: "Telegram bot token"
+    description: "Optional TorrServer Telegram bot token."
+  m3u_custom_host:
+    name: "Custom host for M3U links"
+    description: "Example: http://homeassistant:8090. Leave empty to use the request host."
+  ssl:
+    name: "Enable SSL"
+    description: "Enable TorrServer HTTPS."
+  ssl_port:
+    name: "SSL port"
+    description: "TorrServer HTTPS port."
+  ssl_cert:
+    name: "SSL certificate"
+    description: "Optional PEM certificate. Leave empty to let TorrServer use its stored/default certificate behavior."
+  ssl_key:
+    name: "SSL private key"
+    description: "Optional PEM private key."
+  proxymode:
+    name: "Proxy mode"
+    description: "tracker: HTTP trackers; peers: peer connections; full: all BitTorrent traffic."
+    options:
+      disabled: "Disabled"
+      tracker: "HTTP trackers only"
+      peers: "Peer connections only"
+      full: "All BitTorrent traffic"
+  proxyurl:
+    name: "Proxy URL"
+    description: "HTTP, SOCKS4, SOCKS5 or SOCKS5H URL, for example socks5h://user:password@example.com:2080."
+  weblog:
+    name: "Web access log"
+    description: "Write TorrServer web access logs to the Home Assistant app log."

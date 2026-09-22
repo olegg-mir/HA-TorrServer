@@ -1,0 +1,12 @@
+diff --git a/web/src/components/Search/SearchDialog.jsx b/web/src/components/Search/SearchDialog.jsx
+--- a/web/src/components/Search/SearchDialog.jsx
++++ b/web/src/components/Search/SearchDialog.jsx
+@@ -75,7 +75,7 @@ const SearchDialog = ({ open, handleClose }) => {
+         params.index = selectedTracker
+       }
+ 
+-      const { data } = await axios.get(url, { params })
++      const { data } = await axios.get(`${url}/`, { params })
+       setResults(data || [])
+     } catch (error) {
+       setErrorMsg(t('Torznab.SearchFailed'))
