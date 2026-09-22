@@ -204,7 +204,9 @@ Container images are published to:
 ghcr.io/olegg-mir/ha-torrserver:<version>
 ```
 
-GitHub Releases are created for successful versions. Release creation must be idempotent: re-running the workflow for an already released version must not fail or create duplicate releases.
+GitHub Releases are created for successful versions. The workflow mirrors the upstream `YouROK/TorrServer` GitHub Release notes into both `torrserver/CHANGELOG.md` and the HA-TorrServer GitHub Release description.
+
+Release handling must be idempotent: re-running the workflow for an existing version should refresh its title/description rather than fail or create a duplicate. This also allows corrected upstream release notes to be synchronized on a later run.
 
 The GitHub Release does not need binary assets; the deployable artifact for Home Assistant is the GHCR image.
 

@@ -36,7 +36,9 @@ When a new upstream release appears, the workflow:
 2. verifies and applies the HA patch set;
 3. builds a multi-architecture image for `amd64` and `arm64`;
 4. publishes it as `ghcr.io/olegg-mir/ha-torrserver:<app-version>-<upstream-tag>`;
-5. updates `torrserver/config.yaml` and the changelog only after the image build succeeds.
+5. copies the upstream TorrServer release notes into `torrserver/CHANGELOG.md`;
+6. updates `torrserver/config.yaml` only after the image build succeeds;
+7. creates or refreshes the matching GitHub Release with the same upstream release notes.
 
 This means an upstream change that conflicts with an HA patch will stop the update rather than publish a potentially broken package.
 
