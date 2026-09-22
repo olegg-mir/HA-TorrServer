@@ -1,0 +1,21 @@
+name: TorrServer
+slug: torrserver
+description: TorrServer for Home Assistant using the official upstream image
+version: "MatriX.145"
+url: "https://github.com/olegg-mir/HA-TorrServer"
+image: "ghcr.io/yourok/torrserver"
+init: false
+legacy: true
+arch:
+  - amd64
+  - aarch64
+map:
+  - type: addon_config
+    read_only: false
+    path: /opt/ts
+ingress: true
+ingress_port: 8090
+host_network: true
+watchdog: "http://[HOST]:[PORT:8090]/echo"
+startup: application
+panel_icon: mdi:movie

@@ -1,0 +1,115 @@
+name: Update TorrServer
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-torrserver
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve latest upstream release
+        id: upstream
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          latest="$(curl -fsSL \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            https://api.github.com/repos/YouROK/TorrServer/releases/latest \
+            | jq -r '.tag_name // empty')"
+
+          if [[ -z "${latest}" || "${latest}" != MatriX.* ]]; then
+            echo "Unexpected upstream tag: ${latest:-<empty>}" >&2
+            exit 1
+          fi
+
+          echo "tag=${latest}" >> "$GITHUB_OUTPUT"
+          echo "Latest upstream release: ${latest}"
+
+      - name: Check upstream multi-arch image
+        id: image
+        shell: bash
+        env:
+          TAG: ${{ steps.upstream.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          image="ghcr.io/yourok/torrserver:${TAG}"
+          echo "Checking ${image}"
+
+          if ! manifest="$(docker manifest inspect "${image}" 2>/dev/null)"; then
+            echo "Upstream image is not available yet; will retry on the next scheduled run."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          arches="$(printf '%s' "${manifest}" | jq -r '.manifests[]?.platform.architecture // empty' | sort -u)"
+          printf 'Architectures found:\n%s\n' "${arches}"
+
+          if grep -qx 'amd64' <<<"${arches}" && grep -qx 'arm64' <<<"${arches}"; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Upstream image is missing amd64 or arm64; will retry later."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update Home Assistant app version
+        id: update
+        if: steps.image.outputs.ready == 'true'
+        shell: bash
+        env:
+          TAG: ${{ steps.upstream.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          config="torrserver/config.yaml"
+          current="$(sed -n 's/^version: "\(.*\)"$/\1/p' "${config}")"
+
+          echo "Current version: ${current}"
+          echo "Latest version:  ${TAG}"
+
+          if [[ "${current}" == "${TAG}" ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          sed -i "s/^version: .*/version: \"${TAG}\"/" "${config}"
+
+          today="$(date -u +%Y-%m-%d)"
+          tmp="$(mktemp)"
+          {
+            printf '## %s - %s\n\n' "${TAG}" "${today}"
+            printf -- '- Updated upstream TorrServer to [%s](https://github.com/YouROK/TorrServer/releases/tag/%s).\n\n' "${TAG}" "${TAG}"
+            cat torrserver/CHANGELOG.md
+          } > "${tmp}"
+          mv "${tmp}" torrserver/CHANGELOG.md
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit update
+        if: steps.update.outputs.changed == 'true'
+        shell: bash
+        env:
+          TAG: ${{ steps.upstream.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add torrserver/config.yaml torrserver/CHANGELOG.md
+          git commit -m "chore: update TorrServer to ${TAG}"
+          git push
