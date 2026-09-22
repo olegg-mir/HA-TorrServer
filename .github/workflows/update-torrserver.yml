@@ -283,8 +283,8 @@ jobs:
           set -euo pipefail
 
           if gh release view "$TARGET_VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            release_status="existing"
             echo "Release already exists: $TARGET_VERSION"
-            echo "result=existing" >> "$GITHUB_OUTPUT"
           else
             notes_file="$(mktemp)"
             cat > "$notes_file" <<EOF
@@ -294,9 +294,9 @@ jobs:
 
           ### Container image
 
-          `ghcr.io/olegg-mir/ha-torrserver:$TARGET_VERSION`
+          Container image: ghcr.io/olegg-mir/ha-torrserver:$TARGET_VERSION
 
-          Architectures: `amd64`, `arm64`.
+          Architectures: amd64, arm64.
 
           ### Home Assistant compatibility changes
 
@@ -315,15 +315,17 @@ jobs:
               --notes-file "$notes_file"
 
             rm -f "$notes_file"
-            echo "result=created" >> "$GITHUB_OUTPUT"
+            release_status="created"
           fi
+
+          echo "result=$release_status" >> "$GITHUB_OUTPUT"
 
           {
             echo
             echo "### GitHub Release"
             echo
             echo "Release: $TARGET_VERSION"
-            echo "Status: $(cat "$GITHUB_OUTPUT" | sed -n 's/^result=//p' | tail -1)"
+            echo "Status: $release_status"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Workflow result
