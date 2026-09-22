@@ -1,5 +1,9 @@
 # HA-TorrServer
 
+<p align="center">
+  <img src="torrserver/logo.png" alt="TorrServer logo" width="240">
+</p>
+
 A Home Assistant App for [YouROK/TorrServer](https://github.com/YouROK/TorrServer), with automatic upstream updates and Home Assistant-specific compatibility patches.
 
 ## About
