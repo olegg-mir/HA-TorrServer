@@ -51,7 +51,7 @@ jobs:
             exit 1
           fi
 
-          jq -r '.body // ""' "$release_json" | sed 's/$//' > "$notes_raw"
+          jq -r '.body // ""' "$release_json" | sed 's/\r$//' > "$notes_raw"
 
           if [[ ! -s "$notes_raw" ]]; then
             printf '_No upstream release notes were provided._\n' > "$notes_raw"
