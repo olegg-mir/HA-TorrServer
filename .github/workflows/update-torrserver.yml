@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout Home Assistant repository
@@ -271,6 +271,61 @@ jobs:
           git commit -m "chore: update TorrServer to ${TARGET_VERSION}"
           git push
 
+      - name: Publish GitHub Release
+        id: release
+        if: steps.verify_image.outcome == 'success'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_VERSION: ${{ steps.versions.outputs.target_version }}
+          UPSTREAM_TAG: ${{ steps.versions.outputs.upstream_tag }}
+        run: |
+          set -euo pipefail
+
+          if gh release view "$TARGET_VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release already exists: $TARGET_VERSION"
+            echo "result=existing" >> "$GITHUB_OUTPUT"
+          else
+            notes_file="$(mktemp)"
+            cat > "$notes_file" <<EOF
+          ## HA-TorrServer $TARGET_VERSION
+
+          Home Assistant package based on upstream [YouROK/TorrServer $UPSTREAM_TAG](https://github.com/YouROK/TorrServer/releases/tag/$UPSTREAM_TAG).
+
+          ### Container image
+
+          `ghcr.io/olegg-mir/ha-torrserver:$TARGET_VERSION`
+
+          Architectures: `amd64`, `arm64`.
+
+          ### Home Assistant compatibility changes
+
+          - M3U custom host support.
+          - Home Assistant Ingress search and playlist fixes.
+          - HTTPS poster URL handling.
+          - Home Assistant configuration for authentication, Telegram, SSL, proxy and web access logging.
+
+          HA-specific changes are adapted from [aatrubilin/hassio-torrserver](https://github.com/aatrubilin/hassio-torrserver).
+          EOF
+
+            gh release create "$TARGET_VERSION" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target main \
+              --title "HA-TorrServer $TARGET_VERSION" \
+              --notes-file "$notes_file"
+
+            rm -f "$notes_file"
+            echo "result=created" >> "$GITHUB_OUTPUT"
+          fi
+
+          {
+            echo
+            echo "### GitHub Release"
+            echo
+            echo "Release: $TARGET_VERSION"
+            echo "Status: $(cat "$GITHUB_OUTPUT" | sed -n 's/^result=//p' | tail -1)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Workflow result
         if: always()
         shell: bash
@@ -279,6 +334,7 @@ jobs:
           BUILD_RESULT: ${{ steps.build_image.outcome }}
           IMAGE_RESULT: ${{ steps.verify_image.outcome }}
           METADATA_RESULT: ${{ steps.metadata.outcome }}
+          RELEASE_RESULT: ${{ steps.release.outcome }}
         run: |
           {
             echo
@@ -290,6 +346,7 @@ jobs:
             echo "| Image build | $BUILD_RESULT |"
             echo "| Image verification | $IMAGE_RESULT |"
             echo "| HA metadata | $METADATA_RESULT |"
+            echo "| GitHub Release | $RELEASE_RESULT |"
             echo
             echo "[Open this workflow run](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
           } >> "$GITHUB_STEP_SUMMARY"
