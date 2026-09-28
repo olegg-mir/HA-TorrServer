@@ -172,7 +172,7 @@ The primary workflow is `.github/workflows/update-torrserver.yml`.
 
 It runs:
 
-- every 6 hours;
+- once per day at 03:17 UTC;
 - manually via `workflow_dispatch`;
 - on changes to build/wrapper/patch/workflow files.
 

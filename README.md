@@ -28,7 +28,7 @@ The patches live in `torrserver/patches/` and are applied to the selected TorrSe
 
 ## Automatic updates
 
-Every 6 hours GitHub Actions checks the latest non-prerelease release from `YouROK/TorrServer`.
+Once per day GitHub Actions checks the latest non-prerelease release from `YouROK/TorrServer`.
 
 When a new upstream release appears, the workflow:
 
