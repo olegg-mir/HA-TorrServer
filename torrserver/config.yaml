@@ -1,7 +1,7 @@
 name: TorrServer
 slug: torrserver
 description: TorrServer for Home Assistant with Ingress fixes and automatic upstream updates
-version: "1.0.0-MatriX.145"
+version: "1.0.0-MatriX.145.1"
 url: "https://github.com/olegg-mir/HA-TorrServer"
 image: "ghcr.io/olegg-mir/ha-torrserver"
 init: false
