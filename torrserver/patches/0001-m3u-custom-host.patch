@@ -1,7 +1,7 @@
 diff --git a/server/web/api/m3u.go b/server/web/api/m3u.go
 --- a/server/web/api/m3u.go
 +++ b/server/web/api/m3u.go
-@@ -5,9 +5,10 @@ import (
+@@ -5,8 +5,9 @@ import (
  	"encoding/hex"
  	"fmt"
  	"net"
