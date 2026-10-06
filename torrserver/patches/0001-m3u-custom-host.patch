@@ -1,22 +1,45 @@
 diff --git a/server/web/api/m3u.go b/server/web/api/m3u.go
 --- a/server/web/api/m3u.go
 +++ b/server/web/api/m3u.go
-@@ -6,6 +6,7 @@ import (
+@@ -5,9 +5,10 @@ import (
+ 	"encoding/hex"
  	"fmt"
+ 	"net"
  	"net/http"
  	"net/url"
 +	"os"
  	"path/filepath"
  	"sort"
  	"strconv"
-@@ -187,6 +188,10 @@ func sendM3U(c *gin.Context, name, hash string, m3u string) {
+@@ -65,7 +66,7 @@ func allPlayList(c *gin.Context) {
+ 		torrs = filtered
+ 	}
+ 
+-	host := mediaBaseURL(c)
++	host := m3uBaseURL(c)
+ 	list := "#EXTM3U\n"
+ 	hash := ""
+ 	// fn=file.m3u fix forkplayer bug with end .m3u in link
+@@ -161,7 +162,7 @@ func streamM3U(c *gin.Context) {
+ 		}
+ 	}
+ 
+-	host := mediaBaseURL(c)
++	host := m3uBaseURL(c)
+ 	list := getM3uList(tor.Status(), host, fromlast, index)
+ 	list = "#EXTM3U\n" + list
+ 	name := strings.ReplaceAll(c.Param("fname"), `/`, "") // strip starting / from param
+@@ -269,6 +270,13 @@ func searchLastPlayed(tor *state.TorrentStatus) int {
+ 	return -1
  }
  
- func getM3uList(tor *state.TorrentStatus, host string, fromLast bool, startIndex string) string {
++func m3uBaseURL(c *gin.Context) string {
 +	if customHost, ok := os.LookupEnv("M3U_CUSTOM_HOST"); ok && customHost != "" {
-+		host = strings.TrimRight(customHost, "/")
++		return strings.TrimRight(customHost, "/")
 +	}
++	return mediaBaseURL(c)
++}
 +
- 	m3u := ""
- 	from := 0
- 	if startIndex != "" {
+ // mediaBaseURL is the scheme and host for links handed to media players. Players reject
+ // TorrServer's self-signed certificate, so when the playlist was requested over it and the
+ // plain HTTP port serves media, the links point at the HTTP port instead.
