@@ -1,3 +1,19 @@
+## 1.0.0-MatriX.146 - 2026-10-09
+
+Based on upstream [TorrServer MatriX.146](https://github.com/YouROK/TorrServer/releases/tag/MatriX.146).
+
+### Upstream release notes
+
+### What's Changed
+* feat(ssl): manage the HTTPS certificate from the web UI without a restart by @lieranderl in https://github.com/YouROK/TorrServer/pull/899
+* perf: buffer HTTP stream reads to reduce client-lock contention by @vladikshkwok in https://github.com/YouROK/TorrServer/pull/900
+
+### New Contributors
+* @vladikshkwok made their first contribution in https://github.com/YouROK/TorrServer/pull/900
+
+**Full Changelog**: https://github.com/YouROK/TorrServer/compare/MatriX.145.2...MatriX.146
+
+
 ## 1.0.0-MatriX.145.2 - 2026-10-06
 
 Based on upstream [TorrServer MatriX.145.2](https://github.com/YouROK/TorrServer/releases/tag/MatriX.145.2).
