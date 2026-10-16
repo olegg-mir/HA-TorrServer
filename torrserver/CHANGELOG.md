@@ -1,3 +1,18 @@
+## 1.0.0-MatriX.146.2 - 2026-10-16
+
+Based on upstream [TorrServer MatriX.146.2](https://github.com/YouROK/TorrServer/releases/tag/MatriX.146.2).
+
+### Upstream release notes
+
+### What's Changed
+* feat(gst): add VAAPI hardware encoder backend by @Whishp in https://github.com/YouROK/TorrServer/pull/915
+
+### New Contributors
+* @Whishp made their first contribution in https://github.com/YouROK/TorrServer/pull/915
+
+**Full Changelog**: https://github.com/YouROK/TorrServer/compare/MatriX.146.1...MatriX.146.2
+
+
 ## 1.0.0-MatriX.146.1 - 2026-10-12
 
 Based on upstream [TorrServer MatriX.146.1](https://github.com/YouROK/TorrServer/releases/tag/MatriX.146.1).
