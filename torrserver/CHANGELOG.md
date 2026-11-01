@@ -1,3 +1,17 @@
+## 1.0.0-MatriX.148 - 2026-11-01
+
+Based on upstream [TorrServer MatriX.148](https://github.com/YouROK/TorrServer/releases/tag/MatriX.148).
+
+### Upstream release notes
+
+### What's Changed
+* fix(waf): match referer rules for an IPv6 address written in any form by @jayhemnani9910 in https://github.com/YouROK/TorrServer/pull/946
+* fix(torznab): write result sizes as KiB, MiB, GiB by @jayhemnani9910 in https://github.com/YouROK/TorrServer/pull/947
+
+
+**Full Changelog**: https://github.com/YouROK/TorrServer/compare/MatriX.147.2...MatriX.148
+
+
 ## 1.0.0-MatriX.147.2 - 2026-10-29
 
 Based on upstream [TorrServer MatriX.147.2](https://github.com/YouROK/TorrServer/releases/tag/MatriX.147.2).
