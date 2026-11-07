@@ -1,3 +1,20 @@
+## 1.0.0-MatriX.150 - 2026-11-07
+
+Based on upstream [TorrServer MatriX.150](https://github.com/YouROK/TorrServer/releases/tag/MatriX.150).
+
+### Upstream release notes
+
+### What's Changed
+* fix(web): fix iOS PWA status bar blur and viewport layout by @Drafteed in https://github.com/YouROK/TorrServer/pull/959
+* fix(web): fix PWA dialog outside-click handling by @Drafteed in https://github.com/YouROK/TorrServer/pull/960
+* fix(gstreamer): stabilize HEVC HDR caps before MP4 muxing by @mvanhorn in https://github.com/YouROK/TorrServer/pull/958
+
+### New Contributors
+* @mvanhorn made their first contribution in https://github.com/YouROK/TorrServer/pull/958
+
+**Full Changelog**: https://github.com/YouROK/TorrServer/compare/MatriX.149...MatriX.150
+
+
 ## 1.0.0-MatriX.149 - 2026-11-05
 
 Based on upstream [TorrServer MatriX.149](https://github.com/YouROK/TorrServer/releases/tag/MatriX.149).
