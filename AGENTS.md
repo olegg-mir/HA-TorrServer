@@ -33,7 +33,7 @@ Home Assistant-specific ideas and the original compatibility work were adapted f
     ├── config.yaml
     ├── icon.png
     ├── logo.png
-    ├── package-version.txt
+    ├── package-revision.txt
     ├── run.sh
     ├── patches/
     │   ├── 0001-m3u-custom-host.patch
@@ -50,7 +50,9 @@ Home Assistant-specific ideas and the original compatibility work were adapted f
 
 ### Upstream source
 
-The build workflow fetches the latest non-prerelease GitHub Release from `YouROK/TorrServer` and checks out that exact release tag into `torrserver/src` during CI.
+The build workflow lists recent upstream releases and selects the latest stable `MatriX.*` release, then checks out that exact tag into `torrserver/src` during CI.
+
+**Do not use the upstream `/releases/latest` endpoint without filtering.** It currently points to `Silo.*`, an early rewrite whose README says it cannot yet build or run. Preserve the `MatriX.*` compatibility filter until Silo has a supported implementation. Never conceal patch conflicts by copying old upstream files.
 
 Do not vendor or commit the complete upstream TorrServer source tree into this repository.
 
@@ -144,27 +146,26 @@ Avoid putting secrets in Docker `ARG` or `ENV`. The project deliberately removed
 
 ## Versioning
 
-`torrserver/package-version.txt` stores the Home Assistant packaging version.
-
-The published App/image/release version is:
+`torrserver/package-revision.txt` stores a nonnegative **HA packaging revision**, initially `0`. The upstream version comes from the selected `MatriX.*` release. The GitHub workflow builds a numeric HA version:
 
 ```text
-<package-version>-<upstream-tag>
+MatriX.150   + packaging revision 0 -> 150.0.0
+MatriX.150.1 + packaging revision 0 -> 150.1.0
+MatriX.151   + packaging revision 0 -> 151.0.0
+MatriX.150   + packaging revision 1 -> 150.0.1
 ```
 
-Example:
+This replaces the old fixed `1.0.0-MatriX.*` prefix. Always publish and verify the corresponding GHCR image before changing `torrserver/config.yaml`.
 
-```text
-1.0.0-MatriX.145
-```
+Increment the HA packaging revision if you change the Dockerfile, wrapper, or patches without a new upstream release. Published image tags must remain immutable. Documentation-only or workflow-only changes do not require a packaging revision.
 
-The upstream part changes when TorrServer releases a new version. Increment the packaging version when the Home Assistant packaging itself requires a release distinction that cannot be represented only by a new upstream tag.
+GitHub Release **tags** are numeric (e.g. `150.0.0`); GitHub Release **titles** use upstream names (e.g. `HA-TorrServer MatriX.150`). Keep historical releases with their original tags.
 
 Keep these aligned:
 
 - `torrserver/config.yaml -> version`
 - GHCR image tag
-- GitHub Release tag/title
+- GitHub Release tag
 
 ## CI/CD workflow
 
@@ -178,7 +179,7 @@ It runs:
 
 Expected order:
 
-1. resolve latest upstream release;
+1. select the latest supported MatriX release; skip experimental Silo;
 2. log in to GHCR;
 3. determine whether an image needs to be built;
 4. check out the upstream release;
@@ -232,7 +233,7 @@ Before considering a packaging change complete, verify as applicable:
 - Ingress opens successfully on the default port.
 - Direct access to port `8090` works on the LAN when expected.
 - Persistent configuration survives an App update.
-- GitHub Release creation succeeds or reports that the release already exists.
+- GitHub Release creation succeeds or refreshes the existing release.
 - No credentials or tokens are committed.
 
 ## Diagnosing workflow failures

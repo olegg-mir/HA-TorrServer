@@ -5,3 +5,5 @@
 This package includes a small set of Home Assistant / Ingress compatibility changes adapted from [aatrubilin/hassio-torrserver](https://github.com/aatrubilin/hassio-torrserver), while keeping the upstream TorrServer source as the base for every build.
 
 Supported architectures: `amd64`, `aarch64`.
+
+The Home Assistant version follows upstream MatriX numbering (for example, `MatriX.150` is `150.0.0`). Experimental `Silo.*` releases are intentionally not packaged.

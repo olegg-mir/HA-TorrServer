@@ -28,19 +28,35 @@ The patches live in `torrserver/patches/` and are applied to the selected TorrSe
 
 ## Automatic updates
 
-Once per day GitHub Actions checks the latest non-prerelease release from `YouROK/TorrServer`.
+Once per day GitHub Actions checks the latest supported stable `MatriX.*` release from `YouROK/TorrServer`.
 
 When a new upstream release appears, the workflow:
 
 1. checks out the exact upstream release tag;
 2. verifies and applies the HA patch set;
 3. builds a multi-architecture image for `amd64` and `arm64`;
-4. publishes it as `ghcr.io/olegg-mir/ha-torrserver:<app-version>-<upstream-tag>`;
+4. publishes it as `ghcr.io/olegg-mir/ha-torrserver:<numeric-app-version>`;
 5. copies the upstream TorrServer release notes into `torrserver/CHANGELOG.md`;
 6. updates `torrserver/config.yaml` only after the image build succeeds;
 7. creates or refreshes the matching GitHub Release with the same upstream release notes.
 
 This means an upstream change that conflicts with an HA patch will stop the update rather than publish a potentially broken package.
+
+### Supported upstream releases
+
+The upstream `Silo.*` series is currently a separate experimental rewrite. Its [Silo.2 README](https://github.com/YouROK/TorrServer/tree/Silo.2) explicitly says it does not compile or run yet. **Silo releases are intentionally skipped** until a compatible, working HA package can be built. This project continues to track stable `MatriX.*` releases.
+
+### Versioning
+
+HA App versions now follow the upstream `MatriX` release, without a permanent `1.0.0` prefix:
+
+| Upstream | Home Assistant version |
+| --- | --- |
+| `MatriX.150` | `150.0.0` |
+| `MatriX.150.1` | `150.1.0` |
+| `MatriX.151` | `151.0.0` |
+
+The third number is the Home Assistant packaging revision from `torrserver/package-revision.txt` (initially `0`). Increase it when rebuilding modified HA patches or runtime for the same upstream version. App `version`, the GHCR tag and the GitHub Release tag must match; Release titles use the upstream label (e.g. **HA-TorrServer MatriX.150**). Historical release tags are preserved.
 
 ## Installation
 
