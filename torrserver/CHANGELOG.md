@@ -1,3 +1,12 @@
+## 150.0.0 - 2026-11-17
+
+Based on upstream [TorrServer MatriX.150](https://github.com/YouROK/TorrServer/releases/tag/MatriX.150).
+
+### Home Assistant packaging update
+
+Switched from the fixed 1.0.0-MatriX.* prefix to upstream-based numeric app versions.
+The upstream source is unchanged; its notes appear in the previous entry.
+
 ## 1.0.0-MatriX.150 - 2026-11-07
 
 Based on upstream [TorrServer MatriX.150](https://github.com/YouROK/TorrServer/releases/tag/MatriX.150).
